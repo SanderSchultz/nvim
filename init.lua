@@ -59,7 +59,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 --Goes to definition
-vim.keymap.set('n', 'gd', '<cmd>vsplit | lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
+-- vim.keymap.set('n', 'gd', '<cmd>vsplit | lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
 
 --Runs the update_all function
 vim.api.nvim_create_user_command('UpdateAll', update_all, {})
@@ -299,16 +299,16 @@ require('lazy').setup {
         end,
     },
 
-    { -- Autoformat
-        'stevearc/conform.nvim',
-        opts = {
-            notify_on_error = false,
-            format_on_save = {
-                timeout_ms = 500,
-                lsp_fallback = true,
-            },
-        },
-    },
+    -- { -- Autoformat
+    --     'stevearc/conform.nvim',
+    --     opts = {
+    --         notify_on_error = false,
+    --         format_on_save = {
+    --             timeout_ms = 500,
+    --             lsp_fallback = true,
+    --         },
+    --     },
+    -- },
 
     { -- Autocompletion
         'hrsh7th/nvim-cmp',
