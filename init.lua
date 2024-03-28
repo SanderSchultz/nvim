@@ -87,10 +87,17 @@ vim.keymap.set('n', 'n', '^', { noremap = true })
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
---Makes what is highlighted copied to clipboard
-vim.keymap.set('n', '<leader>y', '"+y')
-vim.keymap.set('v', '<leader>y', '"+y')
-vim.keymap.set('n', '<leader>Y', '"+Y')
+--Makes what is highlighted copied or pasted from/to clipboard
+vim.keymap.set('n', 'y', '"+y')
+vim.keymap.set('v', 'y', '"+y')
+vim.keymap.set('n', 'Y', '"+Y')
+
+vim.keymap.set('n', 'p', '"+p')
+vim.keymap.set('v', 'p', '"+p')
+vim.keymap.set('n', 'P', '"+P')
+
+vim.keymap.set('n', 'dd', '"+dd')
+vim.keymap.set('v', 'd', '"+dd')
 
 --Sets Ctrl + z to go back just like u
 vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
