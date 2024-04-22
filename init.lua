@@ -96,8 +96,8 @@ vim.keymap.set('n', 'p', '"+p')
 vim.keymap.set('v', 'p', '"+p')
 vim.keymap.set('n', 'P', '"+P')
 
-vim.keymap.set('n', 'dd', '"+dd')
-vim.keymap.set('v', 'd', '"+dd')
+vim.keymap.set('n', 'dd', '"+dd', {noremap = true})
+vim.keymap.set('v', 'd', '"+d', {noremap = true})
 
 --Sets Ctrl + z to go back just like u
 vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
@@ -141,6 +141,7 @@ require('lazy').setup {
     'mbbill/undotree',
     'tpope/vim-fugitive',
     { 'nvim-lualine/lualine.nvim', opts = {} },
+
 
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim',     opts = {} },
@@ -289,6 +290,14 @@ require('lazy').setup {
             -- You can add other tools here that you want Mason to install
             -- for you, so that they are available from within Neovim.
             require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+            local mark = require("harpoon.mark")
+            local ui = require("harpoon.ui")
+
+            vim.keymap.set("n", "<leader>a", mark.add_file)
+            vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
+
+            vim.keymap.set("n", "<C-f>", function() ui.nav_next() end)
 
             require('mason-lspconfig').setup {
                 handlers = {
