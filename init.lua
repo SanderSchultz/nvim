@@ -380,8 +380,36 @@ require('lazy').setup {
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
+
             vim.cmd.colorscheme 'nordic'
+
+            -- Autocommand to change colorscheme based on file type
+            -- vim.api.nvim_create_autocmd('FileType', {
+            --     pattern = 'python',
+            --     callback = function()
+            --         require('lazy').load { plugins = { 'gruvbox' }}
+            --         vim.cmd.colorscheme 'gruvbox'  -- Change to the desired colorscheme for Python
+            --     end,
+            -- })
+
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = 'c',
+                callback = function()
+                    require('lazy').load { plugins = { 'onedarkpro.nvim' }}
+                    vim.cmd.colorscheme 'onedark'  -- Change to the desired colorscheme for Python
+                end,
+            })
+
         end,
+    },
+
+    {
+        'morhetz/gruvbox',
+        lazy = true,
+    },
+    {
+        'olimorris/onedarkpro.nvim',
+        lazy = true,
     },
 
     -- NOTE: Note -- NOTE:
