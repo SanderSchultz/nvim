@@ -42,6 +42,14 @@ local function update_all()
     vim.cmd 'Lazy'
 end
 
+--Highlight for LazyGit
+vim.cmd([[
+  augroup LazyGitColors
+    autocmd!
+    autocmd ColorScheme * highlight LazyGitBorder guifg=#1e222a
+  augroup END
+]])
+
 -- Create an autocommand group for LaTeX specific settings
 vim.api.nvim_create_augroup('LaTeX', { clear = true })
 
