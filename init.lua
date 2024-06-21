@@ -408,20 +408,17 @@ require('lazy').setup {
 
             vim.cmd.colorscheme 'nordic'
 
-            -- Autocommand to change colorscheme based on file type
-            -- vim.api.nvim_create_autocmd('FileType', {
-            --     pattern = 'python',
-            --     callback = function()
-            --         require('lazy').load { plugins = { 'gruvbox' }}
-            --         vim.cmd.colorscheme 'gruvbox'  -- Change to the desired colorscheme for Python
-            --     end,
-            -- })
-
             vim.api.nvim_create_autocmd('FileType', {
                 pattern = 'c',
                 callback = function()
-                    require('lazy').load { plugins = { 'onedarkpro.nvim' }}
-                    vim.cmd.colorscheme 'onedark'  -- Change to the desired colorscheme for Python
+                    vim.schedule(function()
+                        vim.cmd('colorscheme github_dark')  -- Change to the desired colorscheme for c
+                        require('lualine').setup {
+                            options = {
+                                theme = 'nordic'
+                            }
+                        }
+                    end)
                 end,
             })
 
@@ -434,6 +431,10 @@ require('lazy').setup {
     },
     {
         'olimorris/onedarkpro.nvim',
+        lazy = true,
+    },
+    {
+        'projekt0n/github-nvim-theme',
         lazy = true,
     },
 
