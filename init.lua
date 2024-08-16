@@ -1,46 +1,164 @@
+---@diagnostic disable: undefined-global
+
+-- NOTE: Note -- NOTE:
+-- TODO: Todo -- TODO:
+-- FIXME: Fix me --FIXME:
+-- WARNING: Warning -- WARNING:
+
+--For checking diagnostics of an error do <leader>d
+--For opening fzf in normal terminal do Alt+c
+--Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
+
+--Disables built in mode-selection (insert, normal) because lualine is used
 vim.opt.showmode = false
 
+--Sets netrw to display tree
+vim.g.netrw_liststyle = 3
+
+--DISABLES DOTFILES (.gitignore example) in every dir in netrw!
+vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
+
+--Enables line numbers in margin
+vim.opt.nu = true
+
+--Enables relativenumber in margin
+vim.opt.relativenumber = true
+
+--Highlights where cursor is positioned
+vim.opt.cursorline = true
+
+--Sets number of spaces that a tab character represents
+vim.opt.tabstop = 4
+
+--Sets tab count while editing
+vim.opt.softtabstop = 4
+
+--Determines numbers of spaces used for each indentation
+vim.opt.shiftwidth = 4
+
+--Converts tabs into spaces
+vim.opt.expandtab = false
+
+--Inserts indentaiton in a smart way based on code structure
+vim.opt.smartindent = true
+
+--Disables swapfiles to store changes not written to disk yet
+vim.opt.swapfile = false
+
+--Disables backupfiles, which is used before overwriting
+vim.opt.backup = false
+
+--Sets the dir where vim stores undo files
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
+
+--Enables persistent undo, which is saved to undo files
+vim.opt.undofile = true
+
+--Highlights all matches of the search pattern
+vim.opt.hlsearch = true
+
+--Enables incremental search, results are shown as you type
+vim.opt.incsearch = true
+
+--Enables true colors support in terminal
+vim.opt.termguicolors = true
+
+--Keeps x amount of lines above and below cursor while scrolling
+vim.opt.scrolloff = 8
+
+--Always show sign column/margin
+vim.opt.signcolumn = 'yes'
+
+--Adds @-@  to list of valid characters in file names, filenames can now include @
+vim.opt.isfname:append '@-@'
+
+--How fast vim triggers the CursorHold event
+vim.opt.updatetime = 50
+
+--Hardsets .h files to be interpreted as .c files
+vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
+
+--Opens a new terminal in the same dir with Ctrl+t
+vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
+
+--Sets the mapleader key
+vim.g.mapleader = ','
+
+--See diagnostic of error, leader d
+vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
+
+--Rename all variables, leader r
+vim.keymap.set('n', '<leader>r', ':%s/')
+
+--Opens the netrw dir
+vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+
+--Changes keymapping for end of line and beginning of line
+vim.keymap.set('n', '<Space>', '$', { noremap = true })
+vim.keymap.set('n', 'n', '^', { noremap = true })
+
+--Changes / search to 's'
+vim.keymap.set('n', 's', '/', { noremap = true })
+
+--Changes Ctrl+n to move to next instance in search, SHIFT+n to go backwards
+vim.keymap.set('n', '<C-n>', 'n', {noremap = true});
+
+--To unmark what has been marked by search
+vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = true })
+
+--Sets df to delete backwards similar to dt, using dT
+vim.keymap.set('n', 'df', 'dT', {noremap = true});
+
+--Moves highlighted lines up and down inside the file
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+--Makes what is highlighted copied or pasted from/to clipboard
+vim.keymap.set('n', 'y', '"+y')
+vim.keymap.set('v', 'y', '"+y')
+vim.keymap.set('n', 'Y', '"+Y')
+
+vim.keymap.set('n', 'p', '"+p')
+vim.keymap.set('v', 'p', '"+p')
+vim.keymap.set('n', 'P', '"+P')
+
+--Make deleting files interact with clipboard
+vim.keymap.set('n', 'dd', '"+dd', {noremap = true})
+vim.keymap.set('v', 'd', '"+d', {noremap = true})
+
+--Sets Ctrl + z to go back just like 'u'
+vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
+
+--Sets Ctrl + s to save file like :w
+vim.keymap.set('n', '<C-s>', ':w<CR>', { noremap = true })
+
+--Sets Ctrl + q to quit like :q!
+vim.keymap.set('n', '<C-q>', ':q!<CR>', { noremap = true })
+
+--Sets mappings to complete parentheses and quotes
+vim.keymap.set('i', '(', '()<Left>', {})
+vim.keymap.set('i', '[', '[]<Left>', {})
+vim.keymap.set('i', '{', '{}<Left>', {})
+
+--Opens the Undotree
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+
+--Signs to be used in margin
 local signs = { Error = ' ', Warning = ' ', Hint = ' ', Information = ' ' }
 for type, icon in pairs(signs) do
     local hl = 'DiagnosticSign' .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
 end
 
-vim.opt.nu = true
-vim.opt.relativenumber = true
-vim.opt.cursorline = true
-
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-
-vim.opt.smartindent = true
-
-vim.opt.swapfile = false
-vim.opt.backup = false
-vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
-vim.opt.undofile = true
-
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-
-vim.opt.termguicolors = true
-
-vim.opt.scrolloff = 8
-vim.opt.signcolumn = 'yes'
-vim.opt.isfname:append '@-@'
-
-vim.opt.updatetime = 50
---For checking diagnostics of an error do <leader>d
---For opening fzf in normal terminal do Alt+c
---Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
-
+--Runs update of parsers, lsp and lazy-imports
 local function update_all()
     vim.cmd 'TSUpdate'
     vim.cmd 'Mason'
     vim.cmd 'Lazy'
 end
+
+--Runs the update_all function
+vim.api.nvim_create_user_command('UpdateAll', update_all, {})
 
 --Highlight for LazyGit
 vim.cmd([[
@@ -66,73 +184,15 @@ vim.api.nvim_create_autocmd('FileType', {
     end,
 })
 
---Goes to definition
--- vim.keymap.set('n', 'gd', '<cmd>vsplit | lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
-
---Runs the update_all function
-vim.api.nvim_create_user_command('UpdateAll', update_all, {})
-
---Opens a new terminal in the same dir
-vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
-
---Sets the mapleader key
-vim.g.mapleader = ','
-
---Sets the keymaps open diagnostic on error I am on
-vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
-
---Sets the keymaps to replace name of variables at once
-vim.keymap.set('n', '<leader>r', ':%s/')
-
---Opens the netrw dir
-vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
-
---Changes keymapping for end of line and beginning of line
-vim.keymap.set('n', '<Space>', '$', { noremap = true })
-vim.keymap.set('n', 'n', '^', { noremap = true })
-
---Moves highlighted lines up and down inside the file
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
-
---Makes what is highlighted copied or pasted from/to clipboard
-vim.keymap.set('n', 'y', '"+y')
-vim.keymap.set('v', 'y', '"+y')
-vim.keymap.set('n', 'Y', '"+Y')
-
-vim.keymap.set('n', 'p', '"+p')
-vim.keymap.set('v', 'p', '"+p')
-vim.keymap.set('n', 'P', '"+P')
-
-vim.keymap.set('n', 'dd', '"+dd', {noremap = true})
-vim.keymap.set('v', 'd', '"+d', {noremap = true})
-
---Sets Ctrl + z to go back just like u
-vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
-
---Sets Ctrl + s to save file like :w
-vim.keymap.set('n', '<C-s>', ':w<CR>', { noremap = true })
-
---Sets Ctrl + q to quit like :q!
-vim.keymap.set('n', '<C-q>', ':q!<CR>', { noremap = true })
-
---Sets mappings to complete parentheses and quotes
-vim.keymap.set('i', '(', '()<Left>', {})
-vim.keymap.set('i', '[', '[]<Left>', {})
-vim.keymap.set('i', '{', '{}<Left>', {})
-vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
-
---  See `:help vim.highlight.on_yank()`
+--Highlights text when yanking/copying
 vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
     callback = function()
         vim.highlight.on_yank()
     end,
 })
 
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
+--Install `lazy.nvim` plugin manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -140,15 +200,15 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+--Initializes lazy
 require('lazy').setup {
 
-    -- Use `opts = {}` to force a plugin to be loaded.
-      {
-        'akinsho/toggleterm.nvim',
-        version = '*',
+	--Toggle terminal with Ctrl+b
+    {'akinsho/toggleterm.nvim',
+		version = '*',
         config = function()
           require("toggleterm").setup{
-            size = 10,
+            size = 7,
             open_mapping = [[<c-b>]],
             hide_numbers = true,
             shade_filetypes = {},
@@ -171,8 +231,10 @@ require('lazy').setup {
           }
         end
       },
+
+	--Configures LazyGit
     {'kdheepak/lazygit.nvim',
-        cmd = {
+		cmd = {
             "LazyGit",
             "LazyGitConfig",
             "LazyGitCurrentFile",
@@ -188,28 +250,35 @@ require('lazy').setup {
         { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
       }
     },
+
+	--Vimtex is a vim version of LaTeX
     'lervag/vimtex',
+
+	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
     'psliwka/vim-smoothie',
+
+	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
     'ThePrimeagen/harpoon',
+
+	--Enables undotree to get visual of undo files, leader+u
     'mbbill/undotree',
+
+	--Integrates Git into the nvim terminal, ':Git pull' example
     'tpope/vim-fugitive',
+
+	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
     { 'nvim-lualine/lualine.nvim', opts = {} },
 
-
-    -- "gc" to comment visual regions/lines
+    --Use "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim',     opts = {} },
 
-    { -- Fuzzy Finder (files, lsp, etc)
-        'nvim-telescope/telescope.nvim',
+	--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
+    {'nvim-telescope/telescope.nvim',
         event = 'VimEnter',
         branch = '0.1.x',
         dependencies = {
             'nvim-lua/plenary.nvim',
             { 'nvim-telescope/telescope-ui-select.nvim' },
-
-            -- Useful for getting pretty icons, but requires special font.
-            --  If you already have a Nerd Font, or terminal set up with fallback fonts
-            --  you can enable this
             { 'nvim-tree/nvim-web-devicons' },
         },
         config = function()
@@ -246,12 +315,13 @@ require('lazy').setup {
             vim.keymap.set('n', '<C-x>', builtin.find_files, {})
 
             --Opens fuzzy finder for files related to Git
-            vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-            vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
+            -- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+            -- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
         end,
     },
 
-    { -- LSP Configuration & Plugins
+	--LSP Configuration & Plugins
+    {
         'neovim/nvim-lspconfig',
         dependencies = {
             -- Automatically install LSPs and related tools to stdpath for neovim
@@ -266,10 +336,7 @@ require('lazy').setup {
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
                 callback = function(event)
-                    -- NOTE: Remember that lua is a real programming language, and as such it is possible
-                    -- to define small helper and utility functions so you don't have to repeat yourself
-                    -- many times.
-                    --
+
                     -- In this case, we create a function that lets us more easily define mappings specific
                     -- for LSP related items. It sets the mode, buffer and description for us each time.
                     local map = function(keys, func, desc)
@@ -278,7 +345,7 @@ require('lazy').setup {
 
                     -- Jump to the definition of the word under your cursor.
                     --  This is where a variable was first declared, or where a function is defined, etc.
-                    --  To jump back, press <C-T>.
+                    --  To jump back, press <C-T> or <C-o>.
                     map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
                     -- Find references for the word under your cursor.
@@ -337,19 +404,17 @@ require('lazy').setup {
             --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
             local servers = {}
 
-            --    :Mason
+            --For lsp management use ':Mason'
             require('mason').setup()
-
             -- You can add other tools here that you want Mason to install
             -- for you, so that they are available from within Neovim.
             require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+			--Local harpoon variables
             local mark = require("harpoon.mark")
             local ui = require("harpoon.ui")
-
             vim.keymap.set("n", "<leader>a", mark.add_file)
             vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
-
             vim.keymap.set("n", "<C-f>", function() ui.nav_next() end)
 
             require('mason-lspconfig').setup {
@@ -378,8 +443,8 @@ require('lazy').setup {
     --     },
     -- },
 
-    { -- Autocompletion
-        'hrsh7th/nvim-cmp',
+	-- Autocompletion
+    {'hrsh7th/nvim-cmp',
         event = 'InsertEnter',
         dependencies = {
             -- Snippet Engine & its associated nvim-cmp source
@@ -427,6 +492,7 @@ require('lazy').setup {
         end,
     },
 
+	--Themes in telescope
     {
         -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
         'AlexvZyl/nordic.nvim',
@@ -436,6 +502,7 @@ require('lazy').setup {
 
             vim.cmd.colorscheme 'nordic'
 
+			--Sets specific theme for .c files
             vim.api.nvim_create_autocmd('FileType', {
                 pattern = 'c',
                 callback = function()
