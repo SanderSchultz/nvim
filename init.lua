@@ -15,7 +15,7 @@ vim.opt.showmode = false
 --Sets netrw to display tree
 vim.g.netrw_liststyle = 3
 
---DISABLES DOTFILES (.gitignore example) in every dir in netrw!
+--Disables showing dotfiles on launch in netrw, use 'gh' to toggle
 vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
 
 --Enables line numbers in margin
