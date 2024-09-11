@@ -254,7 +254,16 @@ require('lazy').setup {
 	--Enables jupyter notebook
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
-	'luk400/vim-jukit',
+	{
+        'luk400/vim-jukit',
+        ft = 'python',  -- Only load for Python files
+        config = function()
+            -- You can add any additional configuration for jukit.nvim here
+            -- Example: Set up keymaps, settings, etc.
+            -- For example:
+            vim.g.jukit_mappings_use_default = 0
+        end,
+    },
 
 	--Vimtex is a vim version of LaTeX
     'lervag/vimtex',
@@ -311,6 +320,8 @@ require('lazy').setup {
                             ['<C-v>'] = open_in_new_terminal, -- Normal mode
                         },
                     },
+
+					file_ignore_patterns = { "build/.*" },
                 },
             }
 
