@@ -98,6 +98,7 @@ vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 --Changes keymapping for end of line and beginning of line
 vim.keymap.set('n', '<Space>', '$', { noremap = true })
 vim.keymap.set('n', 'n', '^', { noremap = true })
+vim.keymap.set('i', '<A-Space>', '<Esc>', { noremap = true })
 
 --Changes / search to 's'
 vim.keymap.set('n', 's', '/', { noremap = true })
@@ -251,7 +252,7 @@ require('lazy').setup {
       -- setting the keybinding for LazyGit with 'keys' is recommended in
       -- order to load the plugin when the command is run for the first time
       keys = {
-        { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+        { "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
       }
     },
 
