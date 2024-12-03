@@ -9,6 +9,7 @@
 --For checking diagnostics of an error do <leader>d
 --For opening fzf in normal terminal do Alt+c
 --Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
+--For jumping back do Ctrl+o, for jumping forward do Ctrl+i
 
 --Disables built in mode-selection (insert, normal) because lualine is used
 vim.opt.showmode = false
@@ -90,7 +91,7 @@ vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
 vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { noremap = true, silent = true })
 
 -- Go to the next tab using Tab
-vim.keymap.set('n', '<Tab>', ':tabnext<CR>', { noremap = true, silent = true })
+-- vim.keymap.set('n', '<C-i>', '<C-i>', { noremap = true, silent = true })
 
 --Sets the mapleader key
 vim.g.mapleader = ','
