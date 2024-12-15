@@ -223,7 +223,7 @@ require('lazy').setup {
 		version = '*',
         config = function()
           require("toggleterm").setup{
-            size = 11,
+            size = 20,
             open_mapping = [[<c-b>]],
             hide_numbers = true,
             shade_filetypes = {},
@@ -540,6 +540,9 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
         config = function()
 
             vim.cmd.colorscheme 'nordic'
+		vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58', ctermbg = 'none' }) -- Adjust bg color
+		-- Adjust comment color to darker gray
+		vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true }) -- Replace #B0B0B0 with a light gray
 
 			--Sets specific theme for .c files
             vim.api.nvim_create_autocmd('FileType', {
@@ -547,6 +550,7 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
                 callback = function()
                     vim.schedule(function()
                         vim.cmd('colorscheme github_dark')  -- Change to the desired colorscheme for c
+						vim.api.nvim_set_hl(0, 'Normal', {bg = 'none'}); -- Change the background to be transparent (follow terminal)
                         require('lualine').setup {
                             options = {
                                 theme = 'nordic'
