@@ -10,6 +10,7 @@
 --For opening fzf in normal terminal do Alt+c
 --Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
 --For jumping back do Ctrl+o, for jumping forward do Ctrl+i
+--For deleting next argument in functions() do 'dn'
 
 --Different commands using i/a (inside and around) and n/l (next, last) = diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets) daa (delet around argument) dana (delete around next argument) dala (delete inside last argument). di? is a custom edge delete
 
@@ -123,6 +124,134 @@ vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = 
 
 -- Opens Oil
 vim.keymap.set('n', '-', '<cmd>Oil<CR>')
+
+-- Function to delete the next argument in a function call
+local function modify_function_call()
+  -- Get the current buffer and cursor position
+  local buf = vim.api.nvim_get_current_buf()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  local line_num = pos[1]
+  local col = pos[2] + 1  -- Lua uses 1-based indexing
+
+  -- Retrieve the current line
+  local line = vim.api.nvim_buf_get_lines(buf, line_num - 1, line_num, false)[1]
+  if not line then
+    vim.notify("Unable to retrieve the current line.", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Find the first '(' before or at the cursor position
+  local open_paren = line:find("%(")
+  if not open_paren then
+    vim.notify("No '(' found in the line.", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Function to find the matching ')' for the '(' found
+  local function find_matching_paren(s, open_pos)
+    local stack = 1
+    for i = open_pos + 1, #s do
+      local char = s:sub(i, i)
+      if char == '(' then
+        stack = stack + 1
+      elseif char == ')' then
+        stack = stack - 1
+        if stack == 0 then
+          return i
+        end
+      end
+    end
+    return nil
+  end
+
+  local close_paren = find_matching_paren(line, open_paren)
+  if not close_paren then
+    vim.notify("No matching ')' found.", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Extract the arguments substring
+  local args_str = line:sub(open_paren + 1, close_paren - 1)
+
+  -- Split arguments by commas, keeping track of their positions
+  local args = {}
+  local start_pos = open_paren + 1
+  for arg in args_str:gmatch("([^,]+)") do
+    local trimmed_arg = arg:match("^%s*(.-)%s*$")  -- Trim spaces
+    local arg_start = line:find(arg, start_pos, true)
+    if arg_start then
+      local arg_end = arg_start + #arg - 1
+      table.insert(args, { text = trimmed_arg, start = arg_start, ["end"] = arg_end })
+      start_pos = arg_end + 2  -- Move past comma and space
+    else
+      -- Handle empty arguments or unexpected patterns
+      table.insert(args, { text = "", start = start_pos, ["end"] = start_pos })
+      start_pos = start_pos + 1
+    end
+  end
+
+  -- Determine if the cursor is on the function name or an argument
+  local is_on_func = (col <= open_paren)
+
+  -- Determine the current argument index based on cursor position
+  local current_arg = 0
+  if not is_on_func then
+    for i, arg in ipairs(args) do
+      if col >= arg.start and col <= arg["end"] then
+        current_arg = i
+        break
+      end
+    end
+  end
+
+  -- Determine the target argument to delete
+  local target_index
+  if is_on_func then
+    target_index = 1  -- Delete the first argument
+  else
+    target_index = current_arg + 1  -- Delete the next argument
+  end
+
+  -- Find the next filled argument to delete
+  while target_index <= #args and args[target_index].text == "" do
+    target_index = target_index + 1
+  end
+
+  if target_index > #args then
+    vim.notify("No further filled arguments to delete.", vim.log.levels.INFO)
+    return
+  end
+
+  -- Delete the target argument by replacing it while keeping proper spacing
+  local target = args[target_index]
+  local new_line = line:sub(1, target.start - 1)
+  if line:sub(target.start - 2, target.start - 2) == "," then
+    if target_index > 1 then
+      new_line = new_line .. " "
+    end
+  end
+  new_line = new_line .. line:sub(target["end"] + 1)
+
+  -- Ensure space after commas remains intact for subsequent arguments
+  new_line = new_line:gsub(",%s*,", ", ,")
+
+  vim.api.nvim_buf_set_lines(buf, line_num - 1, line_num, false, { new_line })
+
+  -- Move the cursor to just after the comma and space, except for the first argument
+  local new_cursor_col = target.start
+  if target_index > 1 then
+    new_cursor_col = target.start
+  else
+    new_cursor_col = target.start - 1
+  end
+  vim.api.nvim_win_set_cursor(0, { line_num, new_cursor_col })
+
+  -- Enter Insert Mode
+  vim.cmd("startinsert")
+end
+
+-- Deletes next argument in functions() using dn
+vim.keymap.set('n', 'dn', modify_function_call, { noremap = true, silent = true })
 
 --Sets df to delete backwards similar to dt, using dT
 vim.keymap.set('n', 'df', 'dT', {noremap = true});
