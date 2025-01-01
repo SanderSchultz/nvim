@@ -125,133 +125,8 @@ vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = 
 -- Opens Oil
 vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 
--- Function to delete the next argument in a function call
-local function modify_function_call()
-  -- Get the current buffer and cursor position
-  local buf = vim.api.nvim_get_current_buf()
-  local pos = vim.api.nvim_win_get_cursor(0)
-  local line_num = pos[1]
-  local col = pos[2] + 1  -- Lua uses 1-based indexing
-
-  -- Retrieve the current line
-  local line = vim.api.nvim_buf_get_lines(buf, line_num - 1, line_num, false)[1]
-  if not line then
-    vim.notify("Unable to retrieve the current line.", vim.log.levels.ERROR)
-    return
-  end
-
-  -- Find the first '(' before or at the cursor position
-  local open_paren = line:find("%(")
-  if not open_paren then
-    vim.notify("No '(' found in the line.", vim.log.levels.ERROR)
-    return
-  end
-
-  -- Function to find the matching ')' for the '(' found
-  local function find_matching_paren(s, open_pos)
-    local stack = 1
-    for i = open_pos + 1, #s do
-      local char = s:sub(i, i)
-      if char == '(' then
-        stack = stack + 1
-      elseif char == ')' then
-        stack = stack - 1
-        if stack == 0 then
-          return i
-        end
-      end
-    end
-    return nil
-  end
-
-  local close_paren = find_matching_paren(line, open_paren)
-  if not close_paren then
-    vim.notify("No matching ')' found.", vim.log.levels.ERROR)
-    return
-  end
-
-  -- Extract the arguments substring
-  local args_str = line:sub(open_paren + 1, close_paren - 1)
-
-  -- Split arguments by commas, keeping track of their positions
-  local args = {}
-  local start_pos = open_paren + 1
-  for arg in args_str:gmatch("([^,]+)") do
-    local trimmed_arg = arg:match("^%s*(.-)%s*$")  -- Trim spaces
-    local arg_start = line:find(arg, start_pos, true)
-    if arg_start then
-      local arg_end = arg_start + #arg - 1
-      table.insert(args, { text = trimmed_arg, start = arg_start, ["end"] = arg_end })
-      start_pos = arg_end + 2  -- Move past comma and space
-    else
-      -- Handle empty arguments or unexpected patterns
-      table.insert(args, { text = "", start = start_pos, ["end"] = start_pos })
-      start_pos = start_pos + 1
-    end
-  end
-
-  -- Determine if the cursor is on the function name or an argument
-  local is_on_func = (col <= open_paren)
-
-  -- Determine the current argument index based on cursor position
-  local current_arg = 0
-  if not is_on_func then
-    for i, arg in ipairs(args) do
-      if col >= arg.start and col <= arg["end"] then
-        current_arg = i
-        break
-      end
-    end
-  end
-
-  -- Determine the target argument to delete
-  local target_index
-  if is_on_func then
-    target_index = 1  -- Delete the first argument
-  else
-    target_index = current_arg + 1  -- Delete the next argument
-  end
-
-  -- Find the next filled argument to delete
-  while target_index <= #args and args[target_index].text == "" do
-    target_index = target_index + 1
-  end
-
-  if target_index > #args then
-    vim.notify("No further filled arguments to delete.", vim.log.levels.INFO)
-    return
-  end
-
-  -- Delete the target argument by replacing it while keeping proper spacing
-  local target = args[target_index]
-  local new_line = line:sub(1, target.start - 1)
-  if line:sub(target.start - 2, target.start - 2) == "," then
-    if target_index > 1 then
-      new_line = new_line .. " "
-    end
-  end
-  new_line = new_line .. line:sub(target["end"] + 1)
-
-  -- Ensure space after commas remains intact for subsequent arguments
-  new_line = new_line:gsub(",%s*,", ", ,")
-
-  vim.api.nvim_buf_set_lines(buf, line_num - 1, line_num, false, { new_line })
-
-  -- Move the cursor to just after the comma and space, except for the first argument
-  local new_cursor_col = target.start
-  if target_index > 1 then
-    new_cursor_col = target.start
-  else
-    new_cursor_col = target.start - 1
-  end
-  vim.api.nvim_win_set_cursor(0, { line_num, new_cursor_col })
-
-  -- Enter Insert Mode
-  vim.cmd("startinsert")
-end
-
--- Deletes next argument in functions() using dn
-vim.keymap.set('n', 'dn', modify_function_call, { noremap = true, silent = true })
+-- -- Bind the function to a shortcut
+-- vim.keymap.set('n', 'dn', cycle_arguments, { noremap = true, silent = true })
 
 --Sets df to delete backwards similar to dt, using dT
 vim.keymap.set('n', 'df', 'dT', {noremap = true});
@@ -268,6 +143,26 @@ vim.keymap.set('n', 'Y', '"+Y')
 vim.keymap.set('n', 'p', '"+p')
 vim.keymap.set('v', 'p', '"+p')
 vim.keymap.set('n', 'P', '"+P')
+
+function print_treesitter_node_info()
+  local ts_utils = require('nvim-treesitter.ts_utils')
+  local node = ts_utils.get_node_at_cursor()
+  if node then
+    print("Node type: " .. node:type())
+    print("Node text: " .. vim.treesitter.get_node_text(node, 0))
+    if node:parent() then
+      print("Parent type: " .. node:parent():type())
+    end
+    print("Children:")
+    for child, _ in node:iter_children() do
+      print("  - " .. child:type() .. ": " .. vim.treesitter.get_node_text(child, 0))
+    end
+  else
+    print("No Treesitter node found at cursor")
+  end
+end
+
+vim.api.nvim_create_user_command('TSNodeInfo', print_treesitter_node_info, {})
 
 --Make deleting files interact with clipboard
 vim.keymap.set('n', 'dd', '"+dd', {noremap = true})
@@ -778,21 +673,67 @@ keys = {
 -- Highlight  NOTE: etc in comments
 { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-
+{
+	'nvim-treesitter/playground',
+	cmd = { 'TSPlaygroundToggle', 'TSHighlightCapturesUnderCursor' }, -- Load only when needed
+},
 
 -- Highlight, edit, and navigate code
-{'nvim-treesitter/nvim-treesitter',
-build = ':TSUpdate',
-config = function()
-	---@diagnostic disable-next-line: missing-fields
-	require('nvim-treesitter.configs').setup {
-		ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
-		-- Autoinstall languages that are not installed
-		auto_install = true,
-		highlight = { enable = true },
-		-- indent = { enable = true },
-	}
-end,
-	},
+{
+	'nvim-treesitter/nvim-treesitter',
+	build = ':TSUpdate',
+	config = function()
+		---@diagnostic disable-next-line: missing-fields
+		require('nvim-treesitter.configs').setup {
+			ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+			-- Autoinstall languages that are not installed
+			auto_install = true,
+			highlight = { enable = true },
+			-- indent = { enable = true },
+		}
+
+		local ts_utils = require('nvim-treesitter.ts_utils')
+
+		local function delete_argument(args, cursor_row, cursor_col)
+			for i, arg in ipairs(args) do
+				local s_row, s_col, e_row, e_col = arg:range()
+				if cursor_row >= s_row and cursor_row <= e_row and cursor_col >= s_col and cursor_col <= e_col then
+					local next_arg = args[i + 1] or args[1]
+					local ns_row, ns_col, ne_row, ne_col = next_arg:range()
+					vim.api.nvim_buf_set_text(0, ns_row, ns_col, ne_row, ne_col, {})
+					vim.api.nvim_win_set_cursor(0, {ns_row + 1, ns_col})
+					vim.cmd('startinsert')
+					return
+				end
+			end
+			local fs_row, fs_col, fe_row, fe_col = args[1]:range()
+			vim.api.nvim_buf_set_text(0, fs_row, fs_col, fe_row, fe_col, {})
+			vim.api.nvim_win_set_cursor(0, {fs_row + 1, fs_col})
+			vim.cmd('startinsert')
+		end
+
+		local function handle_delete_arg()
+			local node = ts_utils.get_node_at_cursor()
+			while node and node:type() ~= 'call_expression' do node = node:parent() end
+			if not node then return print("No call_expression found.") end
+
+			local args, cursor = {}, vim.api.nvim_win_get_cursor(0)
+			for child in node:iter_children() do
+				if child:type() == 'argument_list' then
+					for arg in child:iter_children() do
+						if not ({['('] = true, [')'] = true, [','] = true})[arg:type()] then
+							table.insert(args, arg)
+						end
+					end
+					break
+				end
+			end
+			if #args > 0 then delete_argument(args, cursor[1] - 1, cursor[2]) else print("No arguments found.") end
+		end
+
+		vim.keymap.set('n', 'dn', handle_delete_arg, { noremap = true, silent = true })
+
+	end,
+},
 
 }
