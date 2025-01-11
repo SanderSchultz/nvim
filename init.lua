@@ -319,7 +319,8 @@ keys = {
 		---@type oil.SetupOpts
 		opts = {
 			keymaps = {
-				['<C-s>'] = false -- Disable Oil's Ctrl+S keybinding
+				['<C-s>'] = false, -- Disable Oil's Ctrl+S keybinding
+				["gg"] = { "actions.toggle_hidden", mode = "n" },
 			}
 		},
 		-- Optional dependencies
@@ -331,103 +332,104 @@ keys = {
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	--<leader>do for clearing history
-	-- {'luk400/vim-jukit',
-	-- 	ft = 'python',  -- Only load for Python files
-	-- 	config = function()
-		-- 		-- Resets jukit history and converts to .ipynb file
-		-- 		vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
-		-- 		-- Sets default mappings
-		-- 		vim.g.jukit_mappings_use_default = 0
-		-- 	end,
-		-- },
+	{'luk400/vim-jukit',
+	ft = { 'python', 'json' },
+	config = function()
+		-- Resets jukit history and converts to .ipynb file
+		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
+		-- Sets default mappings
+		vim.g.jukit_mappings_use_default = 0
+	end,
+},
 
-		--Vimtex is a vim version of LaTeX
-		-- 'lervag/vimtex',
+--Vimtex is a vim version of LaTeX
+-- 'lervag/vimtex',
 
-		--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
-		'psliwka/vim-smoothie',
+--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
+'psliwka/vim-smoothie',
 
-		--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-		'ThePrimeagen/harpoon',
+--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
+'ThePrimeagen/harpoon',
 
-		--Enables undotree to get visual of undo files, leader+u
-		'mbbill/undotree',
+--Enables undotree to get visual of undo files, leader+u
+'mbbill/undotree',
 
-		--Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
-		{
-			'echasnovski/mini.ai',
-			version = '*',
-			config = function()
-				require('mini.ai').setup()
-			end
-		},
+--Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
+{
+	'echasnovski/mini.ai',
+	version = '*',
+	config = function()
+		require('mini.ai').setup()
+	end
+},
 
-		--Integrates Git into the nvim terminal, ':Git pull' example
-		-- 'tpope/vim-fugitive',
+--Integrates Git into the nvim terminal, ':Git pull' example
+-- 'tpope/vim-fugitive',
 
-		--Enables lualine, the line at the bottom, this has to be included this way with brackets!
-		{ 'nvim-lualine/lualine.nvim', opts = {} },
+--Enables lualine, the line at the bottom, this has to be included this way with brackets!
+{ 'nvim-lualine/lualine.nvim', opts = {} },
 
-		--Use "gc" to comment visual regions/lines
-		{ 'numToStr/Comment.nvim',     opts = {} },
+--Use "gc" to comment visual regions/lines
+{ 'numToStr/Comment.nvim',     opts = {} },
 
-		--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
-		{'nvim-telescope/telescope.nvim',
-		event = 'VimEnter',
-		branch = '0.1.x',
-		dependencies = {
-			'nvim-lua/plenary.nvim',
-			{ 'nvim-telescope/telescope-ui-select.nvim' },
-			{ 'nvim-tree/nvim-web-devicons' },
-			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-		},
-		config = function()
+--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
+{'nvim-telescope/telescope.nvim',
+event = 'VimEnter',
+branch = '0.1.x',
+dependencies = {
+	'nvim-lua/plenary.nvim',
+	{ 'nvim-telescope/telescope-ui-select.nvim' },
+	{ 'nvim-tree/nvim-web-devicons' },
+	{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+},
+config = function()
 
-			local actions = require 'telescope.actions'
-			local action_state = require 'telescope.actions.state'
+	local actions = require 'telescope.actions'
+	local action_state = require 'telescope.actions.state'
 
-			-- Custom action to open files in a new terminal session
-			local open_in_new_terminal = function(prompt_bufnr)
-				local selection = action_state.get_selected_entry()
-				local filepath = selection.path
+	-- Custom action to open files in a new terminal session
+	local open_in_new_terminal = function(prompt_bufnr)
+		local selection = action_state.get_selected_entry()
+		local filepath = selection.path
 
-				local cmd = string.format("kitty nvim '%s' &", filepath)
-				actions.close(prompt_bufnr)
-				vim.fn.system(cmd)
-			end
+		local cmd = string.format("kitty nvim '%s' &", filepath)
+		actions.close(prompt_bufnr)
+		vim.fn.system(cmd)
+	end
 
-			require('telescope').setup {
-				defaults = {
-					mappings = {
-						i = {
-							['<C-v>'] = open_in_new_terminal, -- Insert mode
-						},
-						n = {
-							['<C-v>'] = open_in_new_terminal, -- Normal mode
-						},
-					},
-
-					file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
+	require('telescope').setup {
+		defaults = {
+			mappings = {
+				i = {
+					['<C-v>'] = open_in_new_terminal, -- Insert mode
 				},
-				extensions = {
-					fzf = {}
+				n = {
+					['<C-v>'] = open_in_new_terminal, -- Normal mode
 				},
-			}
+			},
 
-			require('telescope').load_extension('fzf')
+			file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
+		},
+		extensions = {
+			fzf = {}
+		},
+	}
 
-			require ("multigrep").setup()
+	require('telescope').load_extension('fzf')
 
-			-- See `:help telescope.builtin`
-			local builtin = require 'telescope.builtin'
+	require ("multigrep").setup()
 
-			--Opens fuzzy finder for files in the same folder that was opened
-			vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+	-- See `:help telescope.builtin`
+	local builtin = require 'telescope.builtin'
 
-			--Opens fuzzy finder for files related to Git
-			-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-			-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
-		end,
+	--Opens fuzzy finder for files in the same folder that was opened
+	vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+
+	--Opens fuzzy finder for files related to Git
+	-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+	-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
+end,
 	},
 
 	--Themes in telescope
