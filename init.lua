@@ -335,9 +335,17 @@ keys = {
 	{'luk400/vim-jukit',
 	ft = { 'python', 'json' },
 	config = function()
+
+		vim.g.jukit_show_execution_signs = 1
+
+		vim.g.jukit_shell_cmd = '/workspace/.venv/bin/python -m IPython --no-autoindent'
 		-- Resets jukit history and converts to .ipynb file
 		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
 		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
+
+		-- Map <leader>all to execute all cells in vim-jukit
+		vim.api.nvim_set_keymap('n', '<leader>all', ':call jukit#send#all()<CR>', { noremap = true, silent = true })
+
 		-- Sets default mappings
 		vim.g.jukit_mappings_use_default = 0
 	end,
@@ -586,6 +594,12 @@ end,
 			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
 				pattern = {"*.js", "*.jsx", "*.tsx"},
 				command = "setfiletype typescript",
+			})
+
+			--Sets ibpn files to be interpreted as python
+			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+				pattern = {"*.ipynb"},
+				command = "setfiletype python",
 			})
 
 			--Local harpoon variables
