@@ -21,7 +21,7 @@ vim.opt.showmode = false
 vim.g.netrw_liststyle = 3
 
 --Disables showing dotfiles on launch in netrw, use 'gh' to toggle
-vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
+-- vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
 
 --Enables line numbers in margin
 vim.opt.nu = true
@@ -100,10 +100,10 @@ vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { nor
 vim.g.mapleader = ','
 
 --See diagnostic of error, leader d
-vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-i>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
 
---Rename all variables, leader r
-vim.keymap.set('n', '<leader>r', ':%s/')
+--Rename all variables, Ctrl + r
+vim.keymap.set('n', '<C-r>', ':%s/')
 
 --Opens the netrw dir
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
