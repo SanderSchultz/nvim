@@ -99,8 +99,9 @@ vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { nor
 --Sets the mapleader key
 vim.g.mapleader = ','
 
---See diagnostic of error, Ctrl + i 
-vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
+--See diagnostic of error, Ctrl + i
+vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>',
+	{ noremap = true, silent = true })
 
 --Rename all variables, Ctrl + r
 vim.keymap.set('n', '<C-r>', ':%s/')
@@ -122,7 +123,7 @@ vim.keymap.set('n', 's', '/', { noremap = true })
 vim.keymap.set('n', '=G', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
 
 --Changes Ctrl+n to move to next instance in search, SHIFT+n to go backwards
-vim.keymap.set('n', '<C-n>', 'n', {noremap = true});
+vim.keymap.set('n', '<C-n>', 'n', { noremap = true });
 
 --To unmark what has been marked by search
 vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = true })
@@ -134,7 +135,7 @@ vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 -- vim.keymap.set('n', 'dn', cycle_arguments, { noremap = true, silent = true })
 
 --Sets df to delete backwards similar to dt, using dT
-vim.keymap.set('n', 'df', 'dT', {noremap = true});
+vim.keymap.set('n', 'df', 'dT', { noremap = true });
 
 --Moves highlighted lines up and down inside the file
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
@@ -150,28 +151,28 @@ vim.keymap.set('v', 'p', '"+p')
 vim.keymap.set('n', 'P', '"+P')
 
 function print_treesitter_node_info()
-  local ts_utils = require('nvim-treesitter.ts_utils')
-  local node = ts_utils.get_node_at_cursor()
-  if node then
-    print("Node type: " .. node:type())
-    print("Node text: " .. vim.treesitter.get_node_text(node, 0))
-    if node:parent() then
-      print("Parent type: " .. node:parent():type())
-    end
-    print("Children:")
-    for child, _ in node:iter_children() do
-      print("  - " .. child:type() .. ": " .. vim.treesitter.get_node_text(child, 0))
-    end
-  else
-    print("No Treesitter node found at cursor")
-  end
+	local ts_utils = require('nvim-treesitter.ts_utils')
+	local node = ts_utils.get_node_at_cursor()
+	if node then
+		print("Node type: " .. node:type())
+		print("Node text: " .. vim.treesitter.get_node_text(node, 0))
+		if node:parent() then
+			print("Parent type: " .. node:parent():type())
+		end
+		print("Children:")
+		for child, _ in node:iter_children() do
+			print("  - " .. child:type() .. ": " .. vim.treesitter.get_node_text(child, 0))
+		end
+	else
+		print("No Treesitter node found at cursor")
+	end
 end
 
 vim.api.nvim_create_user_command('TSNodeInfo', print_treesitter_node_info, {})
 
 --Make deleting files interact with clipboard
-vim.keymap.set('n', 'dd', '"+dd', {noremap = true})
-vim.keymap.set('v', 'd', '"+d', {noremap = true})
+vim.keymap.set('n', 'dd', '"+dd', { noremap = true })
+vim.keymap.set('v', 'd', '"+d', { noremap = true })
 
 --Sets Ctrl + z to go back just like 'u'
 vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
@@ -193,13 +194,30 @@ vim.keymap.set('i', '\'', '\'\'<Left>', {})
 --Opens the Undotree
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
 
---Signs to be used in margin
+
+------------------------------------------------------------------------
+-----------------------Signs to be used in margin-----------------------
+------------------------------------------------------------------------
 local signs = { Error = ' ', Warning = ' ', Hint = ' ', Information = ' ' }
+vim.o.signcolumn = "yes"
 for type, icon in pairs(signs) do
 	local hl = 'DiagnosticSign' .. type
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
 end
+-- Ensure LSP respects the custom signs
+vim.diagnostic.config({
+  signs = {
+    severity = {
+      min = vim.diagnostic.severity.HINT
+    }
+  }
+})
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 
+------------------------------------------------------------------------
+-----------------------------Update configs-----------------------------
+------------------------------------------------------------------------
 local function wait_for_window_to_close(bufname, callback)
 	local timer = vim.loop.new_timer()
 	timer:start(100, 100, vim.schedule_wrap(function()
@@ -226,6 +244,10 @@ end
 
 --Runs the update_all function
 vim.api.nvim_create_user_command('UpdateAll', update_all, {})
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
 
 --Highlight for LazyGit
 vim.cmd([[
@@ -272,51 +294,51 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
 
 	--Toggle terminal with Ctrl+b
-	{'akinsho/toggleterm.nvim',
-	version = '*',
-	config = function()
-		require("toggleterm").setup{
-			size = 20,
-			open_mapping = [[<c-b>]],
-			hide_numbers = true,
-			shade_filetypes = {},
-			shade_terminals = true,
-			shading_factor = '1',
-			start_in_insert = true,
-			insert_mappings = true,
-			persist_size = true,
-			direction = 'horizontal',
-			close_on_exit = true,
-			shell = vim.o.shell,
-			float_opts = {
-				border = 'curved',
-				winblend = 0,
-				highlights = {
-					border = "Normal",
-					background = "Normal",
+	{ 'akinsho/toggleterm.nvim',
+		version = '*',
+		config = function()
+			require("toggleterm").setup {
+				size = 20,
+				open_mapping = [[<c-b>]],
+				hide_numbers = true,
+				shade_filetypes = {},
+				shade_terminals = true,
+				shading_factor = '1',
+				start_in_insert = true,
+				insert_mappings = true,
+				persist_size = true,
+				direction = 'horizontal',
+				close_on_exit = true,
+				shell = vim.o.shell,
+				float_opts = {
+					border = 'curved',
+					winblend = 0,
+					highlights = {
+						border = "Normal",
+						background = "Normal",
+					}
 				}
 			}
-		}
-	end
-},
+		end
+	},
 
---Configures LazyGit
-{'kdheepak/lazygit.nvim',
-cmd = {
-	"LazyGit",
-	"LazyGitConfig",
-	"LazyGitCurrentFile",
-	"LazyGitFilter",
-	"LazyGitFilterCurrentFile",
-},
-dependencies = {
-	"nvim-lua/plenary.nvim",
-},
--- setting the keybinding for LazyGit with 'keys' is recommended in
--- order to load the plugin when the command is run for the first time
-keys = {
-	{ "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
-}
+	--Configures LazyGit
+	{ 'kdheepak/lazygit.nvim',
+		cmd = {
+			"LazyGit",
+			"LazyGitConfig",
+			"LazyGitCurrentFile",
+			"LazyGitFilter",
+			"LazyGitFilterCurrentFile",
+		},
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		-- setting the keybinding for LazyGit with 'keys' is recommended in
+		-- order to load the plugin when the command is run for the first time
+		keys = {
+			{ "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+		}
 	},
 
 	{
@@ -338,112 +360,111 @@ keys = {
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	--<leader>do for clearing history
--- 	{'luk400/vim-jukit',
--- 	ft = { 'python', 'json' },
--- 	config = function()
---
--- 		vim.g.jukit_show_execution_signs = 1
---
--- 		vim.g.jukit_shell_cmd = '/workspace/.venv/bin/python -m IPython --no-autoindent'
--- 		-- Resets jukit history and converts to .ipynb file
--- 		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
--- 		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
---
--- 		-- Map <leader>all to execute all cells in vim-jukit
--- 		vim.api.nvim_set_keymap('n', '<leader>all', ':call jukit#send#all()<CR>', { noremap = true, silent = true })
---
--- 		-- Sets default mappings
--- 		vim.g.jukit_mappings_use_default = 0
--- 	end,
--- },
+	-- 	{'luk400/vim-jukit',
+	-- 	ft = { 'python', 'json' },
+	-- 	config = function()
+	--
+	-- 		vim.g.jukit_show_execution_signs = 1
+	--
+	-- 		vim.g.jukit_shell_cmd = '/workspace/.venv/bin/python -m IPython --no-autoindent'
+	-- 		-- Resets jukit history and converts to .ipynb file
+	-- 		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+	-- 		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
+	--
+	-- 		-- Map <leader>all to execute all cells in vim-jukit
+	-- 		vim.api.nvim_set_keymap('n', '<leader>all', ':call jukit#send#all()<CR>', { noremap = true, silent = true })
+	--
+	-- 		-- Sets default mappings
+	-- 		vim.g.jukit_mappings_use_default = 0
+	-- 	end,
+	-- },
 
---Vimtex is a vim version of LaTeX
--- 'lervag/vimtex',
+	--Vimtex is a vim version of LaTeX
+	-- 'lervag/vimtex',
 
---Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
-'psliwka/vim-smoothie',
+	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
+	'psliwka/vim-smoothie',
 
---Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-'ThePrimeagen/harpoon',
+	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
+	'ThePrimeagen/harpoon',
 
---Enables undotree to get visual of undo files, leader+u
-'mbbill/undotree',
+	--Enables undotree to get visual of undo files, leader+u
+	'mbbill/undotree',
 
---Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
-{
-	'echasnovski/mini.ai',
-	version = '*',
-	config = function()
-		require('mini.ai').setup()
-	end
-},
+	--Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
+	{
+		'echasnovski/mini.ai',
+		version = '*',
+		config = function()
+			require('mini.ai').setup()
+		end
+	},
 
---Integrates Git into the nvim terminal, ':Git pull' example
--- 'tpope/vim-fugitive',
+	--Integrates Git into the nvim terminal, ':Git pull' example
+	-- 'tpope/vim-fugitive',
 
---Enables lualine, the line at the bottom, this has to be included this way with brackets!
-{ 'nvim-lualine/lualine.nvim', opts = {} },
+	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
+	{ 'nvim-lualine/lualine.nvim', opts = {} },
 
---Use "gc" to comment visual regions/lines
-{ 'numToStr/Comment.nvim',     opts = {} },
+	--Use "gc" to comment visual regions/lines
+	{ 'numToStr/Comment.nvim',     opts = {} },
 
---Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
-{'nvim-telescope/telescope.nvim',
-event = 'VimEnter',
-branch = '0.1.x',
-dependencies = {
-	'nvim-lua/plenary.nvim',
-	{ 'nvim-telescope/telescope-ui-select.nvim' },
-	{ 'nvim-tree/nvim-web-devicons' },
-	{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-},
-config = function()
-
-	local actions = require 'telescope.actions'
-	local action_state = require 'telescope.actions.state'
-
-	-- Custom action to open files in a new terminal session
-	local open_in_new_terminal = function(prompt_bufnr)
-		local selection = action_state.get_selected_entry()
-		local filepath = selection.path
-
-		local cmd = string.format("kitty nvim '%s' &", filepath)
-		actions.close(prompt_bufnr)
-		vim.fn.system(cmd)
-	end
-
-	require('telescope').setup {
-		defaults = {
-			mappings = {
-				i = {
-					['<C-v>'] = open_in_new_terminal, -- Insert mode
-				},
-				n = {
-					['<C-v>'] = open_in_new_terminal, -- Normal mode
-				},
-			},
-
-			file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
+	--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
+	{ 'nvim-telescope/telescope.nvim',
+		event = 'VimEnter',
+		branch = '0.1.x',
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			{ 'nvim-telescope/telescope-ui-select.nvim' },
+			{ 'nvim-tree/nvim-web-devicons' },
+			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 		},
-		extensions = {
-			fzf = {}
-		},
-	}
+		config = function()
+			local actions = require 'telescope.actions'
+			local action_state = require 'telescope.actions.state'
 
-	require('telescope').load_extension('fzf')
+			-- Custom action to open files in a new terminal session
+			local open_in_new_terminal = function(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local filepath = selection.path
 
-	require ("multigrep").setup()
+				local cmd = string.format("kitty nvim '%s' &", filepath)
+				actions.close(prompt_bufnr)
+				vim.fn.system(cmd)
+			end
 
-	-- See `:help telescope.builtin`
-	local builtin = require 'telescope.builtin'
+			require('telescope').setup {
+				defaults = {
+					mappings = {
+						i = {
+							['<C-v>'] = open_in_new_terminal, -- Insert mode
+						},
+						n = {
+							['<C-v>'] = open_in_new_terminal, -- Normal mode
+						},
+					},
 
-	--Opens fuzzy finder for files in the same folder that was opened
-	vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+					file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
+				},
+				extensions = {
+					fzf = {}
+				},
+			}
 
-	--Opens fuzzy finder for files related to Git
-	-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-	-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
-end,
+			require('telescope').load_extension('fzf')
+
+			require("multigrep").setup()
+
+			-- See `:help telescope.builtin`
+			local builtin = require 'telescope.builtin'
+
+			--Opens fuzzy finder for files in the same folder that was opened
+			vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+
+			--Opens fuzzy finder for files related to Git
+			-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+			-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
+		end,
 	},
 
 	--Themes in telescope
@@ -453,7 +474,6 @@ end,
 		-- lazy = false,    -- make sure we load this during startup if it is your main colorscheme
 		-- priority = 1000, -- make sure to load this before all the other start plugins
 		config = function()
-
 			-- Set highlights AFTER the colorscheme is loaded
 			vim.api.nvim_create_autocmd('ColorScheme', {
 				pattern = '*',
@@ -481,7 +501,6 @@ end,
 					vim.api.nvim_set_hl(0, 'TelescopePreviewLine', { bg = '#484F58' })
 					vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = '#484F58', fg = '#ffffff' })
 					vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
-
 				end,
 			})
 
@@ -513,11 +532,11 @@ end,
 			})
 
 			vim.api.nvim_create_autocmd('FileType', {
-				pattern = { 'rust' },
+				pattern = { 'rust', 'rs' },
 				callback = function()
 					vim.schedule(function()
-						vim.cmd.colorscheme 'github_dark'
-						-- vim.cmd.colorscheme 'gruvbox'
+						-- vim.cmd.colorscheme 'github_dark'
+						vim.cmd.colorscheme 'gruvbox'
 
 						-- Remove the background (applies globally, but you can limit it to filetype-specific logic)
 						vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
@@ -536,7 +555,6 @@ end,
 					end)
 				end,
 			})
-
 		end,
 	},
 
@@ -556,7 +574,6 @@ end,
 			vim.api.nvim_create_autocmd('LspAttach', {
 				group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
 				callback = function(event)
-
 					-- In this case, we create a function that lets us more easily define mappings specific
 					-- for LSP related items. It sets the mode, buffer and description for us each time.
 					local map = function(keys, func, desc)
@@ -629,7 +646,7 @@ end,
 								},
 								flake8 = {
 									enabled = true,
-									ignore = { "E501", "E262", "W503", "E266", "N8", "E402"},
+									ignore = { "E501", "E262", "W503", "E266", "N8", "E402" },
 								},
 								pylint = {
 									enabled = false,
@@ -646,14 +663,14 @@ end,
 			require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
 			--Sets qss files to be interpreted as css
-			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-				pattern = {"*.qss"},
+			vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+				pattern = { "*.qss" },
 				command = "setfiletype css",
 			})
 
 			--Sets js files to be interpreted as ts
-			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-				pattern = {"*.js", "*.jsx", "*.tsx"},
+			vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+				pattern = { "*.js", "*.jsx", "*.tsx" },
 				command = "setfiletype typescript",
 			})
 
@@ -689,136 +706,142 @@ end,
 	},
 
 	-- Autocompletion
-	{'hrsh7th/nvim-cmp',
-	event = 'InsertEnter',
-	dependencies = {
-		-- Snippet Engine & its associated nvim-cmp source
-		{
-			'L3MON4D3/LuaSnip',
-			build = (function()
-				-- Build Step is needed for regex support in snippets
-				-- This step is not supported in many windows environments
-				-- Remove the below condition to re-enable on windows
-				if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-					return
-				end
-				return 'make install_jsregexp'
-			end)(),
+	{ 'hrsh7th/nvim-cmp',
+		event = 'InsertEnter',
+		dependencies = {
+			-- Snippet Engine & its associated nvim-cmp source
+			{
+				'L3MON4D3/LuaSnip',
+				build = (function()
+					-- Build Step is needed for regex support in snippets
+					-- This step is not supported in many windows environments
+					-- Remove the below condition to re-enable on windows
+					if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+						return
+					end
+					return 'make install_jsregexp'
+				end)(),
+			},
+			'saadparwaiz1/cmp_luasnip',
+
+			'hrsh7th/cmp-nvim-lsp',
+			'hrsh7th/cmp-path',
 		},
-		'saadparwaiz1/cmp_luasnip',
+		config = function()
+			-- See `:help cmp`
+			local cmp = require 'cmp'
+			local luasnip = require 'luasnip'
+			luasnip.config.setup {}
 
-		'hrsh7th/cmp-nvim-lsp',
-		'hrsh7th/cmp-path',
-	},
-	config = function()
-		-- See `:help cmp`
-		local cmp = require 'cmp'
-		local luasnip = require 'luasnip'
-		luasnip.config.setup {}
+			cmp.setup {
+				snippet = {
+					expand = function(args)
+						luasnip.lsp_expand(args.body)
+					end,
+				},
+				completion = { completeopt = 'menu,menuone,noinsert' },
 
-		cmp.setup {
-			snippet = {
-				expand = function(args)
-					luasnip.lsp_expand(args.body)
-				end,
-			},
-			completion = { completeopt = 'menu,menuone,noinsert' },
+				mapping = cmp.mapping.preset.insert {
 
-			mapping = cmp.mapping.preset.insert {
-
-				['<TAB>'] = cmp.mapping.confirm { select = true },
-			},
-			sources = {
-				{ name = 'nvim_lsp' },
-				{ name = 'luasnip' },
-				{ name = 'path' },
-			},
-		}
-	end,
-},
-
-{
-	'morhetz/gruvbox',
-	lazy = true,
-},
-{
-	'olimorris/onedarkpro.nvim',
-	lazy = true,
-},
-{
-	'projekt0n/github-nvim-theme',
-	lazy = true,
-},
-
--- Better cmd visuals
-{
-  "folke/noice.nvim",
-  event = "VeryLazy",
-  opts = {
-	  messages = {
-      enabled = false,
-    },
-	views = {
-		cmdline_popup = {
-			border = {
-				style = "rounded"
+					['<TAB>'] = cmp.mapping.confirm { select = true },
+				},
+				sources = {
+					{ name = 'nvim_lsp' },
+					{ name = 'luasnip' },
+					{ name = 'path' },
+				},
 			}
+		end,
+	},
+
+	{
+		'morhetz/gruvbox',
+		lazy = true,
+	},
+	{
+		'olimorris/onedarkpro.nvim',
+		lazy = true,
+	},
+	{
+		'projekt0n/github-nvim-theme',
+		lazy = true,
+	},
+
+	-- Better cmd visuals
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {
+			messages = {
+				enabled = false,
+			},
+			views = {
+				cmdline_popup = {
+					border = {
+						style = "rounded"
+					}
+				}
+			},
+			lsp = {
+				progress = {
+					enabled = false, -- Disables LSP progress messages
+				},
+				hover = {
+					enabled = false, -- Disables LSP hover messages
+				},
+				signature = {
+					enabled = false, -- Disables signature help messages
+				},
+			},
+			popupmenu = {
+				enabled = false, -- Disables Noice popup menu
+			},
+			notify = {
+				enabled = false, -- Disables Noice notifications
+			},
+			cmdline = {
+				view = "cmdline_popup",
+				format = {
+					cmdline = { pattern = "^:", icon = "", lang = "vim" },
+					filter = false,
+					shell = { pattern = "^:!", icon = "$", lang = "bash"},
+				},
+			}
+		},
+		dependencies = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
 		}
 	},
-    lsp = {
-      progress = {
-        enabled = false, -- Disables LSP progress messages
-      },
-      hover = {
-        enabled = false, -- Disables LSP hover messages
-      },
-      signature = {
-        enabled = false, -- Disables signature help messages
-      },
-    },
-    popupmenu = {
-      enabled = false, -- Disables Noice popup menu
-    },
-    notify = {
-      enabled = false, -- Disables Noice notifications
-    },
-  },
-  dependencies = {
-    -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-    "MunifTanjim/nui.nvim",
-    -- OPTIONAL:
-    --   `nvim-notify` is only needed, if you want to use the notification view.
-    --   If not available, we use `mini` as the fallback
-    "rcarriga/nvim-notify",
-    }
-},
 
--- Highlight  NOTE: etc in comments
-{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+	-- Highlight  NOTE: etc in comments
+	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-{
-	'nvim-treesitter/playground',
-	cmd = { 'TSPlaygroundToggle', 'TSHighlightCapturesUnderCursor' }, -- Load only when needed
-},
+	{
+		'nvim-treesitter/playground',
+		cmd = { 'TSPlaygroundToggle', 'TSHighlightCapturesUnderCursor' }, -- Load only when needed
+	},
 
--- Highlight, edit, and navigate code
-{
-	'nvim-treesitter/nvim-treesitter',
-	build = ':TSUpdate',
-	config = function()
-		---@diagnostic disable-next-line: missing-fields
-		require('nvim-treesitter.configs').setup {
-			ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
-			-- Autoinstall languages that are not installed
-			auto_install = true,
-			highlight = { enable = true },
-			-- indent = { enable = true },
-		}
+	-- Highlight, edit, and navigate code
+	{
+		'nvim-treesitter/nvim-treesitter',
+		build = ':TSUpdate',
+		config = function()
+			---@diagnostic disable-next-line: missing-fields
+			require('nvim-treesitter.configs').setup {
+				ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+				-- Autoinstall languages that are not installed
+				auto_install = true,
+				highlight = { enable = true },
+				-- indent = { enable = true },
+			}
 
-		require ("treesitter_utils").setup()
-
-
-	end,
-},
+			require("treesitter_utils").setup()
+		end,
+	},
 
 }
