@@ -181,8 +181,9 @@ vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
 vim.keymap.set('n', '<C-s>', '<Cmd>update<CR>', { silent = true })
 vim.keymap.set('i', '<C-s>', '<Esc><Cmd>update<CR>a', { silent = true })
 
---Sets Ctrl + q to quit like :q!
-vim.keymap.set('n', '<C-q>', ':q!<CR>', { noremap = true })
+--Sets Ctrl + s to save file like :w
+vim.keymap.set('n', '<C-q>', '<Cmd>quit<CR>', { silent = true })
+vim.keymap.set('i', '<C-q>', '<Esc><Cmd>quit<CR>a', { silent = true })
 
 --Sets mappings to complete parentheses and quotes
 vim.keymap.set('i', '(', '()<Left>', {})
