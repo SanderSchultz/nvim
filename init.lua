@@ -114,6 +114,10 @@ vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false
 --Rename all variables, Ctrl + r
 vim.keymap.set('n', '<C-r>', ':%s/')
 
+vim.keymap.set("n", "U", function()
+  vim.cmd("redo")
+end, { noremap = true, silent = true })
+
 --Opens the netrw dir
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 
