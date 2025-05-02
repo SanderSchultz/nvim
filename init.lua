@@ -2,10 +2,10 @@
 
 local original_notify = vim.notify
 vim.notify = function(msg, ...)
-  if type(msg) == "string" and msg:find("deprecated") then
-    return
-  end
-  original_notify(msg, ...)
+	if type(msg) == "string" and msg:find("deprecated") then
+		return
+	end
+	original_notify(msg, ...)
 end
 
 -- NOTE: Note -- NOTE:
@@ -115,7 +115,7 @@ vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false
 vim.keymap.set('n', '<C-r>', ':%s/')
 
 vim.keymap.set("n", "U", function()
-  vim.cmd("redo")
+	vim.cmd("redo")
 end, { noremap = true, silent = true })
 
 --Opens the netrw dir
@@ -219,11 +219,11 @@ for type, icon in pairs(signs) do
 end
 -- Ensure LSP respects the custom signs
 vim.diagnostic.config({
-  signs = {
-    severity = {
-      min = vim.diagnostic.severity.HINT
-    }
-  }
+	signs = {
+		severity = {
+			min = vim.diagnostic.severity.HINT
+		}
+	}
 })
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------
@@ -413,6 +413,21 @@ require('lazy').setup {
 		end
 	},
 
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {},
+		-- stylua: ignore
+		keys = {
+			{ "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+			{ "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+			{ "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+			{ "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+			{ "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+		}
+	},
+
 	--Integrates Git into the nvim terminal, ':Git pull' example
 	-- 'tpope/vim-fugitive',
 
@@ -475,9 +490,9 @@ require('lazy').setup {
 			-- vim.keymap.set('n', '<C-x>', builtin.find_files, {})
 
 			vim.keymap.set('n', '<C-x>', function()
-			  require('telescope.builtin').find_files({
-				file_ignore_patterns = {"node_modules", "target", "build"}
-			  })
+				require('telescope.builtin').find_files({
+					file_ignore_patterns = { "node_modules", "target", "build" }
+				})
 			end)
 
 			--Opens fuzzy finder for files related to Git
@@ -823,7 +838,7 @@ require('lazy').setup {
 				format = {
 					cmdline = { pattern = "^:", icon = "", lang = "vim" },
 					filter = false,
-					shell = { pattern = "^:!", icon = "$", lang = "bash"},
+					shell = { pattern = "^:!", icon = "$", lang = "bash" },
 				},
 			}
 		},
