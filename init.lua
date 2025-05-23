@@ -108,12 +108,12 @@ require('lazy').setup {
 	'psliwka/vim-smoothie',
 
 	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-	'ThePrimeagen/harpoon',
+	-- 'ThePrimeagen/harpoon',
 
 	--Enables undotree to get visual of undo files, leader+u
 	'mbbill/undotree',
 
-	--Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
+	--Lets you do ciq (change inside quotes) cif (change inside function) cib (change inside brackets)
 	{
 		'echasnovski/mini.ai',
 		version = '*',
@@ -128,20 +128,12 @@ require('lazy').setup {
 	--Use "gc" to comment visual regions/lines
 	{ 'numToStr/Comment.nvim',     opts = {} },
 
-	{
-		'morhetz/gruvbox',
-		lazy = true,
-	},
-	{
-		'olimorris/onedarkpro.nvim',
-		lazy = true,
-	},
-	{
-		'projekt0n/github-nvim-theme',
-		lazy = true,
-	},
+	{ 'morhetz/gruvbox', lazy = true },
 
-	-- Highlight  NOTE: etc in comments
+	{ 'olimorris/onedarkpro.nvim', lazy = true },
+	{ 'projekt0n/github-nvim-theme', lazy = true },
+
+	-- Highlight  TODO: etc in comments
 	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
 	{

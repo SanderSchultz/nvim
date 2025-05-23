@@ -1,5 +1,20 @@
 ---@diagnostic disable: undefined-global
 
+vim.keymap.set("c", "?", function()
+  if vim.fn.getcmdpos() == 1 then
+    return vim.api.nvim_replace_termcodes("Oil oil-ssh://", true, false, true)
+  end
+  return "?"
+end, { expr = true, noremap = true, desc = "Oil-SSH prefix when cmdline is empty" })
+
+-- In command‐line mode, make <CR> “smart” for Oil-SSH URIs
+vim.keymap.set("c", "<CR>", function()
+  if vim.fn.getcmdline():match("^Oil%s+oil%-ssh://[^/]+$") then
+    return vim.api.nvim_replace_termcodes("/\r", true, false, true)
+  end
+  return vim.api.nvim_replace_termcodes("\r", true, false, true)
+end, { expr = true, noremap = true, desc = "Oil-SSH: append slash before Enter" })
+
 -- See diagnostics of error, Ctrl + e
 vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>',
 	{ noremap = true, silent = true })

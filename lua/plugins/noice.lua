@@ -36,6 +36,12 @@ return {
 				cmdline = { pattern = "^:", icon = "", lang = "vim" },
 				filter = false,
 				shell = { pattern = "^:!", icon = "$", lang = "bash" },
+				ssh = {
+					pattern = "^:Oil%s+oil%-ssh://",
+					icon    = " SSH",
+					lang    = "bash",
+					filter  = true, -- hides that prefix in the popup
+				},
 			},
 		}
 	},
