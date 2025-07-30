@@ -106,4 +106,5 @@ map('i', '\'', '\'\'<Left>', {})
 map('n', '<leader>u', vim.cmd.UndotreeToggle)
 
 --Toggles Claude Code
-map('n', '<C-c>', '<cmd>ClaudeCode<cr>')
+map('n', '<M-\\>', '<cmd>ClaudeCode<cr>')
+map('t', '<M-\\>', '<cmd>ClaudeCode<cr>')

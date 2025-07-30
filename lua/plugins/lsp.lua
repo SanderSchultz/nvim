@@ -8,7 +8,13 @@ return {
 		'WhoIsSethDaniel/mason-tool-installer.nvim',
 
 		-- Useful status updates for LSP.
-		{ 'j-hui/fidget.nvim', opts = {} },
+		{ 'j-hui/fidget.nvim', opts = {
+			notification = {
+				window = {
+					winblend = 0,
+				}
+			}
+		} },
 	},
 	config = function()
 		vim.api.nvim_create_autocmd('LspAttach', {
