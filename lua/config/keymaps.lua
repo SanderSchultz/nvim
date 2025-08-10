@@ -104,7 +104,3 @@ map('i', '\'', '\'\'<Left>', {})
 
 --Opens the Undotree
 map('n', '<leader>u', vim.cmd.UndotreeToggle)
-
---Toggles Claude Code
-map('n', '<M-\\>', '<cmd>ClaudeCode<cr>')
-map('t', '<M-\\>', '<cmd>ClaudeCode<cr>')
