@@ -101,9 +101,6 @@ require('lazy').setup {
 
 	{ import = "plugins" },
 
-	--Vimtex is a vim version of LaTeX
-	-- 'lervag/vimtex',
-
 	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
 	'psliwka/vim-smoothie',
 
