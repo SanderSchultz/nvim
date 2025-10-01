@@ -8,13 +8,16 @@ return {
 		'WhoIsSethDaniel/mason-tool-installer.nvim',
 
 		-- Useful status updates for LSP.
-		{ 'j-hui/fidget.nvim', opts = {
-			notification = {
-				window = {
-					winblend = 0,
+		{
+			'j-hui/fidget.nvim',
+			opts = {
+				notification = {
+					window = {
+						winblend = 0,
+					}
 				}
 			}
-		} },
+		},
 	},
 	config = function()
 		vim.api.nvim_create_autocmd('LspAttach', {
@@ -32,7 +35,7 @@ return {
 				map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
 				-- Find references for the word under your cursor.
-				map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+				-- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
 				-- Jump to the implementation of the word under your cursor.
 				--  Useful when your language has ways of declaring types without an actual implementation.

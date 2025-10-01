@@ -30,6 +30,13 @@ map('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', op
 --Rename all variables, Ctrl + r
 map('n', '<C-r>', ':%s/')
 
+map('n', 'gr', function()
+	require('telescope.builtin').lsp_references({
+		show_line = false,
+		ignore_filename = false,
+	})
+end)
+
 --Undoes the undo (U undoes u)
 map("n", "U", function()
 	vim.cmd("redo")
