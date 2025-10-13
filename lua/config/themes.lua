@@ -75,7 +75,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = { 'cpp' },
 	callback = function()
-		set_theme_for_filetype('tokyonight', 'tokyonight', false)
+		set_theme_for_filetype('tokyonight-night', 'tokyonight-night', false)
 	end,
 })
 
