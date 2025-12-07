@@ -9,6 +9,8 @@ map('n', '<M-h>', '<Cmd>BufferPrevious<CR>', opts)
 map('n', '<M-l>', '<Cmd>BufferNext<CR>', opts)
 map('n', '<M-w>', '<Cmd>BufferClose<CR>', opts)
 
+map('n', '<A-b>', '<Cmd>!~/programming/personal/cpp_game/run_me.sh<CR>', opts)
+
 map("c", "?", function()
 	if vim.fn.getcmdpos() == 1 then
 		return vim.api.nvim_replace_termcodes("Oil oil-ssh://", true, false, true)
