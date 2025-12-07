@@ -9,7 +9,7 @@ map('n', '<M-h>', '<Cmd>BufferPrevious<CR>', opts)
 map('n', '<M-l>', '<Cmd>BufferNext<CR>', opts)
 map('n', '<M-w>', '<Cmd>BufferClose<CR>', opts)
 
-map('n', '<A-b>', '<Cmd>!~/programming/personal/cpp_game/run_me.sh<CR>', opts)
+map('n', '<A-b>', function() vim.cmd('TermExec cmd="~/programming/personal/cpp_game/run_me.sh"') end, opts)
 
 map("c", "?", function()
 	if vim.fn.getcmdpos() == 1 then
