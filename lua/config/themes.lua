@@ -79,4 +79,11 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
+-- vim.api.nvim_create_autocmd('FileType', {
+-- 	pattern = { 'cpp', 'cppm' },
+-- 	callback = function()
+-- 		set_theme_for_filetype('ayu', 'ayu', false)
+-- 	end,
+-- })
+
 return M
