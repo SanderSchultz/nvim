@@ -35,7 +35,7 @@ return {
 
 				},
 
-				file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
+				file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*", ".*%.png$" },
 			},
 			extensions = {
 				fzf = {}
@@ -45,6 +45,7 @@ return {
 		require('telescope').load_extension('fzf')
 		require("utils.combined_grep").setup()
 		require("utils.combined_find_files").setup()
+		require("utils.cmake_telescope").setup()
 
 		-- See `:help telescope.builtin`
 		local builtin = require 'telescope.builtin'

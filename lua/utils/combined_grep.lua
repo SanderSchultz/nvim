@@ -84,7 +84,8 @@ local live_combined_grep = function(opts)
 			-- Standard rg flags
 			vim.list_extend(args, {
 				"--color=never", "--no-heading", "--with-filename",
-				"--line-number", "--column", "--smart-case"
+				"--line-number", "--column", "--smart-case",
+				"-g", "!*.png"
 			})
 
 			-- Handle directory search (non-recursive)
