@@ -14,6 +14,24 @@ local function apply_transparent_highlights()
 		'TelescopeResultsBorder',
 		'TelescopePreviewNormal',
 		'TelescopePreviewBorder',
+		'TabLine',
+		'TabLineSel',
+		'TabLineFill',
+		'BufferTabpageFill',
+		'BufferTabpages',
+		'BufferVisible',
+		'BufferVisibleIndex',
+		'BufferVisibleMod',
+		'BufferVisibleSign',
+		'BufferVisibleTarget',
+		'BufferVisibleIcon',
+		'BufferInactive',
+		'BufferInactiveIndex',
+		'BufferInactiveMod',
+		'BufferInactiveSign',
+		'BufferInactiveTarget',
+		'BufferInactiveIcon',
+		'BufferOffset',
 	}
 
 	for _, group in ipairs(hl_groups) do
@@ -21,6 +39,12 @@ local function apply_transparent_highlights()
 	end
 
 	vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+	vim.api.nvim_set_hl(0, 'BufferCurrent', { bg = '#484F58', fg = '#ffffff', bold = true })
+	vim.api.nvim_set_hl(0, 'BufferCurrentIndex', { bg = '#484F58', fg = '#ffffff', bold = true })
+	vim.api.nvim_set_hl(0, 'BufferCurrentMod', { bg = '#484F58', fg = '#e5c07b', bold = true })
+	vim.api.nvim_set_hl(0, 'BufferCurrentSign', { bg = '#484F58', fg = '#7aa2f7' })
+	vim.api.nvim_set_hl(0, 'BufferCurrentTarget', { bg = '#484F58', fg = '#f7768e', bold = true })
+	vim.api.nvim_set_hl(0, 'BufferCurrentIcon', { bg = '#484F58' })
 	vim.api.nvim_set_hl(0, 'TelescopePreviewLine', { bg = '#484F58' })
 	vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = '#484F58', fg = '#ffffff' })
 	vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
@@ -75,7 +99,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = { 'cpp', 'cppm' },
 	callback = function()
-		set_theme_for_filetype('tokyonight-night', 'tokyonight-night', false)
+		set_theme_for_filetype('tokyonight-night', 'tokyonight-night', true)
 	end,
 })
 
